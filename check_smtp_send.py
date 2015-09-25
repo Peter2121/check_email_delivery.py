@@ -15,20 +15,23 @@ EXIT_WARNING = 1
 EXIT_CRITICAL = 2
 EXIT_UNKNOWN = 3
 
-parser = argparse.ArgumentParser(description='foo')
-parser.add_argument('-H', required=True)
-parser.add_argument('--port', type=int, default=587)
-parser.add_argument('--profile', required=True)
-parser.add_argument('--profileconfig', default='/etc/nagios-plugins/check_email_delivery_credentials.ini')
-parser.add_argument('--mailfrom', required=True)
-parser.add_argument('--mailto', required=True)
+DEFAULT_PORT = 587
+DEFAULT_PROFILECONFIG = '/etc/nagios-plugins/check_email_delivery_credentials.ini'
+
+parser = argparse.ArgumentParser(description='This program sends a test email message over SMTP TLS.')
+parser.add_argument('-H', dest='host', metavar='host', required=True, help='SMTP host')
+parser.add_argument('--port', type=int, default=DEFAULT_PORT, help='SMTP port (default=%i)'%DEFAULT_PORT)
+parser.add_argument('--profile', required=True, help='credential profile in config file')
+parser.add_argument('--profileconfig', metavar='config.ini', default=DEFAULT_PROFILECONFIG, help='location of the config file (default=%s)'%DEFAULT_PROFILECONFIG)
+parser.add_argument('--mailfrom', metavar='sender@host1', required=True, help='email address of the test message sender')
+parser.add_argument('--mailto', metavar='receiver@host2', required=True, help='email address of the test message receiver')
 
 try:
     args = vars(parser.parse_args())
 except SystemExit:
     sys.exit(EXIT_UNKNOWN)
 
-host = args['H']
+host = args['host']
 port = args['port']
 profile = args['profile']
 profileconfig = args['profileconfig']
