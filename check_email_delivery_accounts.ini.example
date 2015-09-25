@@ -1,0 +1,7 @@
+[profile1]
+username=account1
+password=somepassword
+
+[profile2]
+username=account2
+password=someotherpassword

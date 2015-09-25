@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(description='foo')
 parser.add_argument('-H', required=True)
 parser.add_argument('--port', type=int, default=587)
 parser.add_argument('--profile', required=True)
+parser.add_argument('--profileconfig', default='/etc/nagios-plugins/check_email_delivery_credentials.ini')
 parser.add_argument('--mailfrom', required=True)
 parser.add_argument('--mailto', required=True)
 args = vars(parser.parse_args())
@@ -19,11 +20,12 @@ args = vars(parser.parse_args())
 host = args['H']
 port = args['port']
 profile = args['profile']
+profileconfig = args['profileconfig']
 mailfrom = args['mailfrom']
 mailto = args['mailto']
 
 config = ConfigParser.SafeConfigParser()
-config.read('config.ini')
+config.read(profileconfig)
 
 try:
     username = config.get(profile,'username')
