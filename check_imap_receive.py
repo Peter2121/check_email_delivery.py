@@ -71,8 +71,6 @@ for num in data[0].split():
 
 sortedmessages = sorted(messages, key=lambda x: x[0])
 
-print sortedmessages
-
 mostrecent = sortedmessages[-1]
 for d,num in sortedmessages[:-1]:
     imap.store(num, '+FLAGS', '\\Deleted')
