@@ -51,33 +51,45 @@ except ConfigParser.NoSectionError:
 except ConfigParser.NoOptionError:
     print('Configuration error: profile %s does not contain username or password' % profile)
     sys.exit(EXIT_UNKNOWN)
+try:
+    imap = imaplib.IMAP4_SSL(host, port)
+    imap.login(username, password)
+    imap.select()
+    typ, data = imap.search(None, 'ALL')
 
-imap = imaplib.IMAP4_SSL(host, port)
-imap.login(username, password)
-imap.select()
-typ, data = imap.search(None, 'ALL')
+    pattern = re.compile(r'\(INTERNALDATE "(.+)"\)')
 
-pattern = re.compile(r'\(INTERNALDATE "(.+)"\)')
+    messages = []
+    for num in data[0].split():
+        typ, data = imap.fetch(num, '(INTERNALDATE)')
+        if typ != 'OK':
+            # TODO: error handling
+            sys.exit(EXIT_UNKNOWN)
+        m = pattern.search(data[0])
+        d = dateutil.parser.parse(m.group(1))
+        messages.append((d,num))
 
-messages = []
-for num in data[0].split():
-    typ, data = imap.fetch(num, '(INTERNALDATE)')
-    if typ != 'OK':
-        # TODO: error handling
-        sys.exit(EXIT_UNKNOWN)
-    m = pattern.search(data[0])
-    d = dateutil.parser.parse(m.group(1))
-    messages.append((d,num))
+    sortedmessages = sorted(messages, key=lambda x: x[0])
 
-sortedmessages = sorted(messages, key=lambda x: x[0])
+    mostrecent = sortedmessages[-1]
+    for d,num in sortedmessages[:-1]:
+        imap.store(num, '+FLAGS', '\\Deleted')
 
-mostrecent = sortedmessages[-1]
-for d,num in sortedmessages[:-1]:
-    imap.store(num, '+FLAGS', '\\Deleted')
-
-imap.expunge()
-imap.close()
-imap.logout()
+    imap.expunge()
+    imap.close()
+    imap.logout()
+except IMAP4.abort as e:
+    # IMAP4 server errors cause this exception to be raised. This is a sub-class of IMAP4.error. Note that closing the instance and instantiating a new one will usually allow recovery from this exception.
+    print e
+    sys.exit(EXIT_CRITICAL)
+except IMAP4.readonly as e:
+    # This exception is raised when a writable mailbox has its status changed by the server. This is a sub-class of IMAP4.error. Some other client now has write permission, and the mailbox will need to be re-opened to re-obtain write permission.
+    print e
+    sys.exit(EXIT_CRITICAL)
+except IMAP4.error as e:
+    # Exception raised on any errors. The reason for the exception is passed to the constructor as a string.
+    print e
+    sys.exit(EXIT_CRITICAL)
 
 sec = (datetime.now(pytz.utc) - mostrecent[0]).total_seconds()
 
