@@ -24,8 +24,8 @@ parser.add_argument('-H', dest='host', metavar='host', required=True, help='SMTP
 parser.add_argument('--port', type=int, default=DEFAULT_PORT, help='SMTP port (default=%i)'%DEFAULT_PORT)
 parser.add_argument('--profile', required=True, help='credential profile in config file')
 parser.add_argument('--profileconfig', metavar='config.ini', default=DEFAULT_PROFILECONFIG, help='location of the config file (default=%s)'%DEFAULT_PROFILECONFIG)
-parser.add_argument('-w', metavar='warningseconds', dest='warn', default=DEFAULT_WARN, help='warn, if the most recent message is older than this value (default=%s)' % DEFAULT_WARN)
-parser.add_argument('-c', metavar='criticalseconds', dest='crit', default=DEFAULT_CRIT, help='critical, if the most recent message is older than this value (default=%s)' % DEFAULT_CRIT)
+parser.add_argument('-w', type=int, metavar='warningseconds', dest='warn', default=DEFAULT_WARN, help='warn, if the most recent message is older than this value (default=%s)' % DEFAULT_WARN)
+parser.add_argument('-c', type=int, metavar='criticalseconds', dest='crit', default=DEFAULT_CRIT, help='critical, if the most recent message is older than this value (default=%s)' % DEFAULT_CRIT)
 
 try:
     args = vars(parser.parse_args())
