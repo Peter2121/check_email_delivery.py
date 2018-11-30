@@ -20,8 +20,8 @@ DEFAULT_WARN = 120
 DEFAULT_CRIT = 600
 
 parser = argparse.ArgumentParser(description='This program checks if the most recent mail in an IMAP inbox is not older than a certain time. Use this check as a companion to check_smtp_send.py, which sends test email messages.')
-parser.add_argument('-H', dest='host', metavar='host', required=True, help='SMTP host')
-parser.add_argument('--port', type=int, default=DEFAULT_PORT, help='SMTP port (default=%i)'%DEFAULT_PORT)
+parser.add_argument('-H', dest='host', metavar='host', required=True, help='IMAP host')
+parser.add_argument('--port', type=int, default=DEFAULT_PORT, help='IMAP port (default=%i)'%DEFAULT_PORT)
 parser.add_argument('--profile', required=True, help='credential profile in config file')
 parser.add_argument('--profileconfig', metavar='config.ini', default=DEFAULT_PROFILECONFIG, help='location of the config file (default=%s)'%DEFAULT_PROFILECONFIG)
 parser.add_argument('-w', type=int, metavar='warningseconds', dest='warn', default=DEFAULT_WARN, help='warn, if the most recent message is older than this value (default=%s)' % DEFAULT_WARN)
