@@ -17,6 +17,8 @@ EXIT_UNKNOWN = 3
 
 DEFAULT_PORT = 587
 DEFAULT_PROFILECONFIG = '/etc/nagios-plugins/check_email_delivery_credentials.ini'
+DEFAULT_BODY = 'This is a test message by the monitoring system to check if email delivery is running fine.'
+DEFAULT_SUBJECT = 'TEST'
 
 parser = argparse.ArgumentParser(description='This program sends a test email message over SMTP TLS.')
 parser.add_argument('-H', dest='host', metavar='host', required=True, help='SMTP host')
@@ -25,6 +27,9 @@ parser.add_argument('--profile', required=True, help='credential profile in conf
 parser.add_argument('--profileconfig', metavar='config.ini', default=DEFAULT_PROFILECONFIG, help='location of the config file (default=%s)'%DEFAULT_PROFILECONFIG)
 parser.add_argument('--mailfrom', metavar='sender@host1', required=True, help='email address of the test message sender')
 parser.add_argument('--mailto', metavar='receiver@host2', required=True, help='email address of the test message receiver')
+parser.add_argument('--body', metavar='body', default=DEFAULT_BODY, help='Message body')
+parser.add_argument('--subject', metavar='subject', default=DEFAULT_SUBJECT, help='Message subject')
+
 
 try:
     args = vars(parser.parse_args())
@@ -37,6 +42,8 @@ profile = args['profile']
 profileconfig = args['profileconfig']
 mailfrom = args['mailfrom']
 mailto = args['mailto']
+body = args['body']
+subject = args['subject']
 
 config = ConfigParser.SafeConfigParser()
 config.read(profileconfig)
@@ -51,11 +58,12 @@ except ConfigParser.NoOptionError:
     print('Configuration error: profile %s does not contain username or password' % profile)
     sys.exit(EXIT_UNKNOWN)
 
-msg = MIMEText('This is a test message by the monitoring system to check if email delivery is running fine.')
-msg['Subject'] = 'TEST'
+msg = MIMEText(body)
+msg['Subject'] = subject
 msg['From'] = mailfrom
 msg['To'] = mailto
 msg['Message-ID'] = '<' + str(uuid.uuid4()) + '@' + host + '>'
+#msg.add_header('X-Nature', 'Test LibreNMS')
 
 nowdt = datetime.datetime.now()
 nowtuple = nowdt.timetuple()
