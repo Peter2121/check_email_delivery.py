@@ -41,7 +41,7 @@ profileconfig = args['profileconfig']
 warn = args['warn']
 crit = args['crit']
 subject = args['subject']
-print('Searching for %s'% subject)
+#print('Searching for %s'% subject)
 srch = '(SUBJECT \"'+subject+'\")'
 
 config = ConfigParser.SafeConfigParser()
@@ -70,6 +70,7 @@ try:
         typ, data = imap.fetch(num, '(INTERNALDATE)')
         if typ != 'OK':
             # TODO: error handling
+            print('UNKNOWN')
             sys.exit(EXIT_UNKNOWN)
         m = pattern.search(data[0])
         d = dateutil.parser.parse(m.group(1))
