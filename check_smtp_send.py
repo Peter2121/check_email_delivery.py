@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+##!/usr/bin/env python3
 
 import sys
 import argparse
-import ConfigParser
+import configparser
 import smtplib
-from email.mime.text import MIMEText
-from email import utils
 import datetime
 import time
 import uuid
+from email.mime.text import MIMEText
+from email import utils
 
 EXIT_OK = 0
 EXIT_WARNING = 1
@@ -47,7 +47,7 @@ mailto = args['mailto']
 body = args['body']
 subject = args['subject']
 
-config = ConfigParser.SafeConfigParser()
+config = configparser.ConfigParser()
 config.read(profileconfig)
 
 try:
@@ -81,43 +81,43 @@ try:
     smtp = smtplib.SMTP(host, port)
     smtp.starttls()
     if username != '':
-		smtp.login(username, password)
+        smtp.login(username, password)
     smtp.sendmail(mailfrom, mailto, msg.as_string())
 except smtplib.SMTPServerDisconnected as e:
     # This exception is raised when the server unexpectedly disconnects, or when an attempt is made to use the SMTP instance before connecting it to a server.
-    print 'SMTPServerDisconnected: ', e
+    print ('SMTPServerDisconnected: ', e)
     sys.exit(EXIT_CRITICAL)
 except smtplib.SMTPResponseException as e:
     # Base class for all exceptions that include an SMTP error code. These exceptions are generated in some instances when the SMTP server returns an error code. The error code is stored in the smtp_code attribute of the error, and the smtp_error attribute is set to the error message.
-    print 'SMTPResponseException: ', e
+    print ('SMTPResponseException: ', e)
     sys.exit(EXIT_CRITICAL)
 except smtplib.SMTPSenderRefused as e:
     # Sender address refused. In addition to the attributes set by on all SMTPResponseException exceptions, this sets 'sender' to the string that the SMTP server refused.
-    print 'SMTPSenderRefused: ', e
+    print ('SMTPSenderRefused: ', e)
     sys.exit(EXIT_CRITICAL)
 except smtplib.SMTPRecipientsRefused as e:
     # All recipient addresses refused. The errors for each recipient are accessible through the attribute recipients, which is a dictionary of exactly the same sort as SMTP.sendmail() returns.
-    print 'SMTPRecipientsRefused: ', e
+    print ('SMTPRecipientsRefused: ', e)
     sys.exit(EXIT_CRITICAL)
 except smtplib.SMTPDataError as e:
     # The SMTP server refused to accept the message data.
-    print 'SMTPDataError: ', e
+    print ('SMTPDataError: ', e)
     sys.exit(EXIT_CRITICAL)
 except smtplib.SMTPConnectError as e:
     # Error occurred during establishment of a connection with the server.
-    print 'SMTPConnectError: ', e
+    print ('SMTPConnectError: ', e)
     sys.exit(EXIT_CRITICAL)
 except smtplib.SMTPHeloError as e:
     # The server refused our HELO message.
-    print 'SMTPHeloError: ', e
+    print ('SMTPHeloError: ', e)
     sys.exit(EXIT_CRITICAL)
 except smtplib.SMTPAuthenticationError as e:
     # SMTP authentication went wrong. Most probably the server didn't accept the username/password combination provided.
-    print 'SMTPResponseException: ', e
+    print ('SMTPResponseException: ', e)
     sys.exit(EXIT_CRITICAL)
 except smtplib.SMTPException as e:
     # The base exception class for all the other exceptions provided by this module.
-    print 'SMTPException: ', e
+    print ('SMTPException: ', e)
     sys.exit(EXIT_CRITICAL)
 
 print('OK')
